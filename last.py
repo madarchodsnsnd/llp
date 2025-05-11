@@ -51,7 +51,6 @@ def is_coowner(update: Update) -> bool:
 
 USER_VPS_SETTINGS = {}  # {user_id: vps_count}
 USER_VPS_PREFERENCES = {}  # {user_id: preferred_vps_count}
-ADMIN_IDS = [OWNER_ID] + COOWNER_IDS  # List of admin user IDs
 GROUP_IMAGES = {}  # Store group images
 
 # Bot management system
