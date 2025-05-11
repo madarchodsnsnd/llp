@@ -1924,25 +1924,24 @@ ATTACK_HISTORY = {}  # Key: (ip, port), Value: attack count
 async def attack_input(update: Update, context: CallbackContext):
     global last_attack_time, running_attacks
 
-    # Input validation
+    # Input validation - now expecting 3 arguments: ip, port, duration
     args = update.message.text.split()
-    if len(args) != 4:  # Now expecting 4 arguments: ip, port, duration, threads
+    if len(args) != 3:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
         await update.message.reply_text(
-            f"❌ *Invalid input! Please enter <ip> <port> <duration> <threads>*\n\n"
+            f"❌ *Invalid input! Please enter <ip> <port> <duration>*\n\n"
             f"👑 *Bot Owner:* {current_display_name}",
             parse_mode='Markdown'
         )
         return ConversationHandler.END
 
-    ip, port, duration, threads = args
+    ip, port, duration = args
     try:
         duration = int(duration)
-        threads = int(threads)
     except ValueError:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
         await update.message.reply_text(
-            f"❌ *Duration and threads must be numbers!*\n\n"
+            f"❌ *Duration must be a number!*\n\n"
             f"👑 *Bot Owner:* {current_display_name}",
             parse_mode='Markdown'
         )
@@ -1969,23 +1968,14 @@ async def attack_input(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     is_special = user_id in redeemed_users and isinstance(redeemed_users[user_id], dict) and redeemed_users[user_id].get('is_special')
     
-    # Validate duration and threads
+    # Validate duration
     max_allowed_duration = SPECIAL_MAX_DURATION if is_special else max_duration
-    max_allowed_threads = SPECIAL_MAX_THREADS if is_special else MAX_THREADS
+    threads = SPECIAL_MAX_THREADS if is_special else MAX_THREADS  # Using fixed MAX_THREADS values
     
     if duration > max_allowed_duration:
         current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
         await update.message.reply_text(
             f"❌ *Attack duration exceeds the max limit ({max_allowed_duration} sec)!*\n\n"
-            f"👑 *Bot Owner:* {current_display_name}",
-            parse_mode='Markdown'
-        )
-        return ConversationHandler.END
-
-    if threads > max_allowed_threads:
-        current_display_name = get_display_name(update.effective_chat.id if update.effective_chat.type in ['group', 'supergroup'] else None)
-        await update.message.reply_text(
-            f"❌ *Thread count exceeds the max limit ({max_allowed_threads})!*\n\n"
             f"👑 *Bot Owner:* {current_display_name}",
             parse_mode='Markdown'
         )
