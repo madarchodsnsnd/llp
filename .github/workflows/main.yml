@@ -23,12 +23,12 @@ jobs:
 
     - name: Extract ALONE.210
       run: |
-        if [ -f "ALONE.210" ]; then
-          file ALONE.210  # Check file type
-          unzip ALONE.210 -d ALONE || 7z x ALONE.210 -oALONE || echo "Extraction failed"
+        if [ -f "ALONE.zip" ]; then
+          file ALONE.zip # Check file type
+          unzip ALONE.zip -d ALONE || 7z x ALONE.zip -oALONE || echo "Extraction failed"
           cd ALONE
         else
-          echo "Error: ALONE.210 not found!"
+          echo "Error: ALONE.zip not found!"
           exit 1
         fi
 
