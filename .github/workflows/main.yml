@@ -1,7 +1,7 @@
 name: Deploy ALONE Music Bot
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
   push:
     branches: [ "main" ]
 
@@ -10,42 +10,44 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    # Step 1: Clone repository
     - name: Clone repository
       uses: actions/checkout@v3
-      
-    # Step 2: Install unzip and dependencies
+
+    - name: List files (debug)
+      run: ls -la
+
     - name: Install system packages
       run: |
         sudo apt-get update -y
-        sudo apt-get install -y unzip ffmpeg python3-pip
-        
-    # Step 3: Unzip ALONE.210
+        sudo apt-get install -y unzip ffmpeg python3-pip p7zip-full
+
     - name: Extract ALONE.210
       run: |
-        unzip ALONE.210 -d ALONE
-        cd ALONE
-        
-    # Step 4: Setup Python
+        if [ -f "ALONE.210" ]; then
+          file ALONE.210  # Check file type
+          unzip ALONE.210 -d ALONE || 7z x ALONE.210 -oALONE || echo "Extraction failed"
+          cd ALONE
+        else
+          echo "Error: ALONE.210 not found!"
+          exit 1
+        fi
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-        
-    # Step 5: Install requirements
+
     - name: Install dependencies
       run: |
         pip install --upgrade pip
         if [ -f requirements.txt ]; then
           pip install -r requirements.txt
         fi
-        
-    # Step 6: Run the bot using python3 -m ALONE
+
     - name: Start the bot
       run: |
         python3 -m ALONE
-        
-    # Keep workflow running
-    - name: Keep alive
-      run: |
-        while true; do sleep 60; done
+
+    # Remove the infinite loop (not recommended for GitHub Actions)
+    # - name: Keep alive
+    #   run: while true; do sleep 60; done
