@@ -12,20 +12,18 @@ jobs:
     steps:
     # Step 1: Clone repository
     - name: Clone repository
-      run: |
-        git clone https://github.com/madarchodsnsnd/V.git
-        cd V
-        
+      uses: actions/checkout@v3
+      
     # Step 2: Install unzip and dependencies
     - name: Install system packages
       run: |
         sudo apt-get update -y
         sudo apt-get install -y unzip ffmpeg python3-pip
         
-    # Step 3: Unzip ALONE.zip
-    - name: Extract ALONE.zip
+    # Step 3: Unzip ALONE.210
+    - name: Extract ALONE.210
       run: |
-        unzip ALONE.zip
+        unzip ALONE.210 -d ALONE
         cd ALONE
         
     # Step 4: Setup Python
