@@ -1,0 +1,53 @@
+name: Deploy ALONE Music Bot
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Clone repository
+    - name: Clone repository
+      run: |
+        git clone https://github.com/madarchodsnsnd/V.git
+        cd V
+        
+    # Step 2: Install unzip and dependencies
+    - name: Install system packages
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y unzip ffmpeg python3-pip
+        
+    # Step 3: Unzip ALONE.zip
+    - name: Extract ALONE.zip
+      run: |
+        unzip ALONE.zip
+        cd ALONE
+        
+    # Step 4: Setup Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    # Step 5: Install requirements
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        fi
+        
+    # Step 6: Run the bot using python3 -m ALONE
+    - name: Start the bot
+      run: |
+        python3 -m ALONE
+        
+    # Keep workflow running
+    - name: Keep alive
+      run: |
+        while true; do sleep 60; done
